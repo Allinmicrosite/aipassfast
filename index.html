@@ -7,8 +7,7 @@
 <meta name="description" content="AI Pass Fast is a clean hub for quick, useful AI tools and concise guides. Launch faster, automate more, and monetize responsibly." />
 <link rel="canonical" href="https://www.aipassfast.com/" />
 <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
-<meta name="theme-color" content="#0a0a0a" />
-
+<meta name="theme-color" content="#f9fafb" />
 
 <!-- Open Graph / Twitter -->
 <meta property="og:type" content="website" />
@@ -20,7 +19,6 @@
 <meta name="twitter:title" content="AI Pass Fast — AI tools and guides, fast." />
 <meta name="twitter:description" content="Quick, useful AI tools and concise guides. Launch faster, automate more, monetize responsibly." />
 <meta name="twitter:image" content="/assets/og-cover.png" />
-
 
 <!-- JSON-LD Schema -->
 <script type="application/ld+json">
@@ -37,32 +35,168 @@
 }
 </script>
 
-
 <style>
-:root{
---bg:#0b0c0e; --fg:#e7e7e7; --muted:#b2b2b2; --link:#7dd3fc; --accent:#22d3ee; --card:#121418; --border:#1f242b;
+:root {
+  --bg: #f9fafb;      /* very light gray background */
+  --fg: #222222;      /* dark gray text */
+  --muted: #6b7280;   /* muted gray */
+  --link: #2563eb;    /* link blue */
+  --accent: #10b981;  /* teal/green accent */
+  --card: #ffffff;    /* white card panels */
+  --border: #e5e7eb;  /* subtle borders */
 }
-*{box-sizing:border-box}
-html{color-scheme:dark light}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif}
-a{color:var(--link);text-decoration:none}
-a:hover{text-decoration:underline}
-.wrap{max-width:1120px;margin:auto;padding:24px}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
-.brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.2px}
-.brand .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);display:inline-block}
-nav a{margin-left:18px;opacity:.9}
-.hero{padding:48px 0 24px;border-bottom:1px solid var(--border)}
-h1{font-size:clamp(28px,6vw,44px);line-height:1.1;margin:0 0 12px}
-.sub{color:var(--muted);max-width:72ch;margin:4px 0 18px}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
-.btn{background:var(--accent);color:#081317;border-radius:12px;padding:12px 16px;font-weight:700;border:1px solid #0ad;display:inline-block}
-.btn.secondary{background:transparent;color:var(--fg);border:1px solid var(--border)}
-.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px;margin:28px 0}
-.card{grid-column:span 12;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px}
-@media(min-width:720px){.span-6{grid-column:span 6}.span-4{grid-column:span 4}.span-8{grid-column:span 8}}
-h2{font-size:clamp(20px,3.4vw,28px);margin:8px 0 12px}
-h3{margin:6px 0 10px}
-.kicker{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
-ul.clean{list-style:none;padding:0;margin:0}
+
+* { box-sizing: border-box; }
+html { color-scheme: light; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+
+a { color: var(--link); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.wrap { max-width: 1120px; margin: auto; padding: 24px; }
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.brand .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+}
+
+nav a { margin-left: 18px; opacity: .9; }
+
+.hero {
+  padding: 48px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+h1 {
+  font-size: clamp(28px,6vw,44px);
+  line-height: 1.1;
+  margin: 0 0 12px;
+}
+
+.sub {
+  color: var(--muted);
+  max-width: 72ch;
+  margin: 4px 0 18px;
+}
+
+.cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-weight: 700;
+  border: 1px solid var(--accent);
+  display: inline-block;
+}
+
+.btn.secondary {
+  background: transparent;
+  color: var(--fg);
+  border: 1px solid var(--border);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(12,1fr);
+  gap: 18px;
+  margin: 28px 0;
+}
+
+.card {
+  grid-column: span 12;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+@media (min-width: 720px) {
+  .span-6 { grid-column: span 6; }
+  .span-4 { grid-column: span 4; }
+  .span-8 { grid-column: span 8; }
+}
+
+h2 {
+  font-size: clamp(20px,3.4vw,28px);
+  margin: 8px 0 12px;
+}
+
+h3 { margin: 6px 0 10px; }
+
+.kicker {
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+ul.clean { list-style: none; padding: 0; margin: 0; }
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <span class="dot"></span> AI Pass Fast
+    </div>
+    <nav>
+      <a href="#">Home</a>
+      <a href="#">Tools</a>
+      <a href="#">Guides</a>
+      <a href="#">About</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>AI tools and guides, fast.</h1>
+    <p class="sub">Quick, useful AI tools and concise guides. Launch faster, automate more, and monetize responsibly.</p>
+    <div class="cta">
+      <a href="#" class="btn">Get Started</a>
+      <a href="#" class="btn secondary">Learn More</a>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="card span-6">
+      <h2>Featured Tool</h2>
+      <p>A streamlined way to test and deploy AI workflows.</p>
+    </div>
+    <div class="card span-6">
+      <h2>Latest Guide</h2>
+      <p>How to integrate AI quickly without overcomplicating your stack.</p>
+    </div>
+  </section>
+</div>
+</body>
 </html>

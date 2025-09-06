@@ -11,3 +11,41 @@
   <button type="submit">Save submission</button>
   <span data-status style="margin-left:.5rem;"></span>
 </form>
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  // 🔁 swap these with your real values (Supabase → Settings → API)
+  const SUPABASE_URL = 'https://YOUR-REF.supabase.co';
+  const SUPABASE_ANON_KEY = 'YOUR_PUBLIC_ANON_KEY';
+
+  // Use the `app` schema
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    db: { schema: 'app' }
+  });
+
+  const form = document.getElementById('guideForm');
+  const statusEl = form.querySelector('[data-status]');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(form);
+    const title  = (fd.get('title')  || '').toString();
+    const prompt = (fd.get('prompt') || '').toString();
+    const skill  = (fd.get('skill')  || 'beginner').toString();
+
+    statusEl.textContent = 'Saving…';
+    try {
+      const { error } = await supabase
+        .from('guide_submissions') // table lives in `app` schema (set above)
+        .insert([{ title, prompt, meta: { source: 'aipassfast', skill } }]);
+
+      if (error) throw error;
+      form.reset();
+      statusEl.textContent = 'Saved ✅';
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Save failed ❌';
+      alert(err.message ?? err);
+    }
+  });
+</script>

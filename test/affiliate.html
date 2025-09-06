@@ -1,0 +1,67 @@
+<h1>Affiliate link test</h1>
+
+<p>
+  <a
+    data-affiliate
+    data-partner="Impact"
+    data-campaign="Namecheap"
+    href="https://www.namecheap.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=namecheap"
+  >Get Namecheap</a>
+</p>
+
+<p>
+  <a
+    data-affiliate
+    data-partner="Impact"
+    data-campaign="NordVPN"
+    href="https://nordvpn.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=nordvpn"
+  >Try NordVPN</a>
+</p>
+
+<p>
+  <a
+    data-affiliate
+    data-partner="PartnerStack"
+    data-campaign="SimpleLogin"
+    href="https://simplelogin.io/?utm_source=aipassfast&utm_medium=aff&utm_campaign=simplelogin"
+  >SimpleLogin</a>
+</p>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...zsU2yI'; // same as before
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+
+  // Small helper to not block navigation forever
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+  document.addEventListener('click', async (e) => {
+    const a = e.target.closest('a[data-affiliate]');
+    if (!a) return;
+
+    const href = a.href;
+    const payload = {
+      partner: a.dataset.partner || 'direct',
+      campaign: a.dataset.campaign || '',
+      url: href,
+      utm: Object.fromEntries(new URL(href).searchParams.entries()),
+      user_agent: navigator.userAgent
+    };
+
+    e.preventDefault();
+    try {
+      // Try to log, but don’t stall navigation >200ms
+      await Promise.race([
+        supabase.from('affiliate_events').insert([payload]),
+        sleep(200)
+      ]);
+    } catch (_) {
+      // non-fatal, just go
+    } finally {
+      window.location.href = href;
+    }
+  });
+</script>

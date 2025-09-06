@@ -1,67 +1,88 @@
-<h1>Affiliate link test</h1>
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8" />
+<title>Affiliate log test</title>
+<body>
+  <h1>Affiliate link test</h1>
 
-<p>
-  <a
-    data-affiliate
-    data-partner="Impact"
-    data-campaign="Namecheap"
-    href="https://www.namecheap.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=namecheap"
-  >Get Namecheap</a>
-</p>
+  <!-- A no-nav test button so we can verify rows appear without leaving the page -->
+  <p><button id="test-insert">Test insert (no navigation)</button> <span id="status"></span></p>
 
-<p>
-  <a
-    data-affiliate
-    data-partner="Impact"
-    data-campaign="NordVPN"
-    href="https://nordvpn.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=nordvpn"
-  >Try NordVPN</a>
-</p>
+  <p>
+    <a
+      data-affiliate
+      data-partner="Impact"
+      data-campaign="Namecheap"
+      href="https://www.namecheap.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=namecheap"
+    >Get Namecheap</a>
+  </p>
 
-<p>
-  <a
-    data-affiliate
-    data-partner="PartnerStack"
-    data-campaign="SimpleLogin"
-    href="https://simplelogin.io/?utm_source=aipassfast&utm_medium=aff&utm_campaign=simplelogin"
-  >SimpleLogin</a>
-</p>
+  <p>
+    <a
+      data-affiliate
+      data-partner="Impact"
+      data-campaign="NordVPN"
+      href="https://nordvpn.com/?utm_source=aipassfast&utm_medium=aff&utm_campaign=nordvpn"
+    >Try NordVPN</a>
+  </p>
 
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...zsU2yI'; // same as before
+    // ⬇️ reuse the exact same values from your working testform.html
+    const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
+    const SUPABASE_ANON_KEY = '<same anon key as testform.html>';
 
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+    const statusEl = document.getElementById('status');
 
-  // Small helper to not block navigation forever
-  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-
-  document.addEventListener('click', async (e) => {
-    const a = e.target.closest('a[data-affiliate]');
-    if (!a) return;
-
-    const href = a.href;
-    const payload = {
-      partner: a.dataset.partner || 'direct',
-      campaign: a.dataset.campaign || '',
-      url: href,
-      utm: Object.fromEntries(new URL(href).searchParams.entries()),
-      user_agent: navigator.userAgent
-    };
-
-    e.preventDefault();
-    try {
-      // Try to log, but don’t stall navigation >200ms
-      await Promise.race([
-        supabase.from('affiliate_events').insert([payload]),
-        sleep(200)
-      ]);
-    } catch (_) {
-      // non-fatal, just go
-    } finally {
-      window.location.href = href;
+    async function logAffiliate(payload) {
+      const { error } = await supabase.from('affiliate_events').insert([payload]);
+      if (error) throw error;
     }
-  });
-</script>
+
+    // 1) No-nav test: write a row we can see immediately in Supabase
+    document.getElementById('test-insert').addEventListener('click', async () => {
+      statusEl.textContent = 'Writing…';
+      try {
+        await logAffiliate({
+          partner: 'direct',
+          campaign: 'button-test',
+          url: location.href,
+          utm: {},
+          user_agent: navigator.userAgent
+        });
+        statusEl.textContent = 'Saved ✅';
+        console.log('Saved affiliate test row.');
+      } catch (e) {
+        statusEl.textContent = 'Failed ❌';
+        alert(e.message || e);
+      }
+    });
+
+    // 2) Link clicks: wait for insert, then navigate (no race; testing reliability)
+    document.addEventListener('click', async (e) => {
+      const a = e.target.closest('a[data-affiliate]');
+      if (!a) return;
+
+      e.preventDefault(); // keep page alive while we write
+      const href = a.href;
+
+      try {
+        await logAffiliate({
+          partner: a.dataset.partner || 'direct',
+          campaign: a.dataset.campaign || '',
+          url: href,
+          utm: Object.fromEntries(new URL(href).searchParams.entries()),
+          user_agent: navigator.userAgent
+        });
+      } catch (e2) {
+        console.warn('Affiliate log failed:', e2);
+        // non-fatal; still navigate
+      } finally {
+        window.location.href = href; // go after write
+      }
+    });
+  </script>
+</body>
+</html>

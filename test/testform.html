@@ -14,14 +14,13 @@
 <script type="module">
   import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  // 🔁 swap these with your real values (Supabase → Settings → API)
+  // your real values (these are fine to expose for anon usage)
   const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
   const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
 
-  // Use the `app` schema
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    db: { schema: 'app' }
-  });
+  // force the `app` schema in TWO ways (belt + suspenders)
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+  const db = supabase.schema('app');
 
   const form = document.getElementById('guideForm');
   const statusEl = form.querySelector('[data-status]');
@@ -29,23 +28,25 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const fd = new FormData(form);
-    const title  = (fd.get('title')  || '').toString();
-    const prompt = (fd.get('prompt') || '').toString();
-    const skill  = (fd.get('skill')  || 'beginner').toString();
+    const title  = String(fd.get('title')  || '');
+    const prompt = String(fd.get('prompt') || '');
+    const skill  = String(fd.get('skill')  || 'beginner');
 
     statusEl.textContent = 'Saving…';
+
     try {
-      const { error } = await supabase
-        .from('guide_submissions') // table lives in `app` schema (set above)
+      // 🚫 do NOT call .select() here — anon doesn't have SELECT permission
+      const { error, status } = await db
+        .from('guide_submissions')
         .insert([{ title, prompt, meta: { source: 'aipassfast', skill } }]);
 
       if (error) throw error;
       form.reset();
-      statusEl.textContent = 'Saved ✅';
+      statusEl.textContent = (status === 201 ? 'Saved ✅' : 'Saved ✅');
     } catch (err) {
-      console.error(err);
+      console.error('Insert failed:', err);
       statusEl.textContent = 'Save failed ❌';
-      alert(err.message ?? err);
+      alert((err && err.message) ? err.message : String(err));
     }
   });
 </script>

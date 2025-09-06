@@ -238,6 +238,49 @@ ul.clean { list-style: none; padding: 0; margin: 0; }
     });
   }
 </script>
+<!-- Latest Guides -->
+<section id="guides-section" style="max-width:960px;margin:2rem auto;padding:1rem;">
+  <h2 style="margin:0 0 .5rem 0;">Latest Guides</h2>
+  <div id="guides">Loading…</div>
+</section>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+  const el = document.getElementById('guides');
+
+  try {
+    const { data, error } = await supabase
+      .from('public_guides')
+      .select('title, slug, created_at, tags')
+      .eq('is_published', true)
+      .order('created_at', { ascending: false })
+      .limit(20);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      el.textContent = 'No guides yet — coming soon.';
+    } else {
+      el.innerHTML = data.map(g => `
+        <article style="padding:1rem;border:1px solid #e5e7eb;border-radius:12px;margin:.75rem 0;">
+          <h3 style="margin:0 0 .25rem 0;">
+            <a href="/guide.html?slug=${encodeURIComponent(g.slug)}">${g.title}</a>
+          </h3>
+          <small>${new Date(g.created_at).toLocaleDateString()}</small>
+          ${g.tags?.length ? `<div style="margin-top:.5rem;opacity:.75;">${g.tags.map(t=>`#${t}`).join(' ')}</div>` : ''}
+        </article>
+      `).join('');
+    }
+  } catch (e) {
+    console.error(e);
+    el.textContent = 'Failed to load guides.';
+  }
+</script>
 
 </body>
 </html>

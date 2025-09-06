@@ -1,0 +1,36 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Guide</title>
+
+<h1 id="title" style="max-width:960px;margin:2rem auto 1rem;"></h1>
+<article id="content" style="max-width:960px;margin:0 auto 4rem;padding:1rem;"></article>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
+
+  const slug = new URLSearchParams(location.search).get('slug');
+  const titleEl = document.getElementById('title');
+  const contentEl = document.getElementById('content');
+
+  if (!slug) { titleEl.textContent = 'Missing guide'; throw new Error('No slug'); }
+
+  const { data, error } = await supabase
+    .from('public_guides')
+    .select('title, content')
+    .eq('slug', slug)
+    .eq('is_published', true)
+    .single();
+
+  if (error) {
+    titleEl.textContent = 'Not found';
+    console.error(error);
+  } else {
+    titleEl.textContent = data.title;
+    contentEl.innerHTML = data.content; // trusted HTML you authored
+  }
+</script>

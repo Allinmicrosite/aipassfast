@@ -31,7 +31,7 @@
 
     // ⬇️ reuse the exact same values from your working testform.html
     const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
-    const SUPABASE_ANON_KEY = '<same anon key as testform.html>';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
     const statusEl = document.getElementById('status');

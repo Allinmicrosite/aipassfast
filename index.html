@@ -1,286 +1,31 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>AI Pass Fast — AI tools and guides, fast.</title>
-<meta name="description" content="AI Pass Fast is a clean hub for quick, useful AI tools and concise guides. Launch faster, automate more, and monetize responsibly." />
-<link rel="canonical" href="https://www.aipassfast.com/" />
-<meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
-<meta name="theme-color" content="#f9fafb" />
-
-<!-- Open Graph / Twitter -->
-<meta property="og:type" content="website" />
-<meta property="og:title" content="AI Pass Fast — AI tools and guides, fast." />
-<meta property="og:description" content="Quick, useful AI tools and concise guides. Launch faster, automate more, monetize responsibly." />
-<meta property="og:url" content="https://www.aipassfast.com/" />
-<meta property="og:image" content="/assets/og-cover.png" />
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="AI Pass Fast — AI tools and guides, fast." />
-<meta name="twitter:description" content="Quick, useful AI tools and concise guides. Launch faster, automate more, monetize responsibly." />
-<meta name="twitter:image" content="/assets/og-cover.png" />
-
-<!-- JSON-LD Schema -->
-<script type="application/ld+json">
-{
-"@context": "https://schema.org",
-"@type": "WebSite",
-"name": "AI Pass Fast",
-"url": "https://www.aipassfast.com/",
-"potentialAction": {
-"@type": "SearchAction",
-"target": "https://www.aipassfast.com/search?q={query}",
-"query-input": "required name=query"
-}
-}
-</script>
-
-<style>
-:root {
-  --bg: #f9fafb;      /* very light gray background */
-  --fg: #222222;      /* dark gray text */
-  --muted: #6b7280;   /* muted gray */
-  --link: #2563eb;    /* link blue */
-  --accent: #10b981;  /* teal/green accent */
-  --card: #ffffff;    /* white card panels */
-  --border: #e5e7eb;  /* subtle borders */
-}
-
-* { box-sizing: border-box; }
-html { color-scheme: light; }
-body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-}
-
-a { color: var(--link); text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-.wrap { max-width: 1120px; margin: auto; padding: 24px; }
-
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 0;
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 700;
-  letter-spacing: .2px;
-}
-
-.brand .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  display: inline-block;
-}
-
-nav a { margin-left: 18px; opacity: .9; }
-
-.hero {
-  padding: 48px 0 24px;
-  border-bottom: 1px solid var(--border);
-}
-
-h1 {
-  font-size: clamp(28px,6vw,44px);
-  line-height: 1.1;
-  margin: 0 0 12px;
-}
-
-.sub {
-  color: var(--muted);
-  max-width: 72ch;
-  margin: 4px 0 18px;
-}
-
-.cta {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.btn {
-  background: var(--accent);
-  color: #fff;
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-weight: 700;
-  border: 1px solid var(--accent);
-  display: inline-block;
-}
-
-.btn.secondary {
-  background: transparent;
-  color: var(--fg);
-  border: 1px solid var(--border);
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(12,1fr);
-  gap: 18px;
-  margin: 28px 0;
-}
-
-.card {
-  grid-column: span 12;
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 18px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-@media (min-width: 720px) {
-  .span-6 { grid-column: span 6; }
-  .span-4 { grid-column: span 4; }
-  .span-8 { grid-column: span 8; }
-}
-
-h2 {
-  font-size: clamp(20px,3.4vw,28px);
-  margin: 8px 0 12px;
-}
-
-h3 { margin: 6px 0 10px; }
-
-.kicker {
-  font-size: 12px;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-ul.clean { list-style: none; padding: 0; margin: 0; }
-</style>
-</head>
-
-<body>
-<div class="wrap">
-  <header>
-    <div class="brand">
-      <span class="dot"></span> AI Pass Fast
-    </div>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">Tools</a>
-      <a href="#">Guides</a>
-      <a href="#">About</a>
-    </nav>
-  </header>
-
-  <section class="hero">
-    <h1>AI tools and guides, fast.</h1>
-    <p class="sub">Quick, useful AI tools and concise guides. Launch faster, automate more, and monetize responsibly.</p>
-    <div class="cta">
-      <a href="#" class="btn">Get Started</a>
-      <a href="#" class="btn secondary">Learn More</a>
-    </div>
-  </section>
-
-  <section class="grid">
-    <div class="card span-6">
-      <h2>Featured Tool</h2>
-      <p>A streamlined way to test and deploy AI workflows.</p>
-    </div>
-    <div class="card span-6">
-      <h2>Latest Guide</h2>
-      <p>How to integrate AI quickly without overcomplicating your stack.</p>
-    </div>
-  </section>
-</div>
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-  // ⬇️ Replace with your real values from Supabase → Settings → API
-  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Expose a tiny helper
-  async function saveSubmission({ title, prompt, output, meta }) {
-    const { error } = await supabase
-      .from('app.guide_submissions')
-      .insert([{ title, prompt, output, meta }]);
-    if (error) throw error;
-  }
-
-  // Wire up a basic form if present
-  const form = document.querySelector('#guideForm');
-  if (form) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const title = fd.get('title')?.toString() || '';
-      const prompt = fd.get('prompt')?.toString() || '';
-      // If you generate an on-page guide, stick it here; otherwise leave blank for now.
-      const output = '';
-      const meta = { source: 'aipassfast', skill: fd.get('skill')?.toString() || 'beginner' };
-
-      form.querySelector('[data-status]').textContent = 'Saving…';
-      try {
-        await saveSubmission({ title, prompt, output, meta });
-        form.reset();
-        form.querySelector('[data-status]').textContent = 'Saved ✅';
-      } catch (err) {
-        console.warn(err);
-        form.querySelector('[data-status]').textContent = 'Save failed ❌';
-      }
-    });
-  }
-</script>
-<!-- Latest Guides -->
-<section id="guides-section" style="max-width:960px;margin:2rem auto;padding:1rem;">
-  <h2 style="margin:0 0 .5rem 0;">Latest Guides</h2>
-  <div id="guides">Loading…</div>
-</section>
-
-<script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-
-  const SUPABASE_URL = 'https://sndwrjoxeosocpjprzwm.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNuZHdyam94ZW9zb2NwanByendtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcxNzM0NTIsImV4cCI6MjA3Mjc0OTQ1Mn0.hPCMan3N-TDDzdKlSDTVoPhUqZNFlCUmpRzOVzsU2yI';
-
-  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { db: { schema: 'app' } });
-  const el = document.getElementById('guides');
-
-  try {
-    const { data, error } = await supabase
-      .from('public_guides')
-      .select('title, slug, created_at, tags')
-      .eq('is_published', true)
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if (error) throw error;
-
-    if (!data?.length) {
-      el.textContent = 'No guides yet — coming soon.';
-    } else {
-      el.innerHTML = data.map(g => `
-        <article style="padding:1rem;border:1px solid #e5e7eb;border-radius:12px;margin:.75rem 0;">
-          <h3 style="margin:0 0 .25rem 0;">
-            <a href="/guide.html?slug=${encodeURIComponent(g.slug)}">${g.title}</a>
-          </h3>
-          <small>${new Date(g.created_at).toLocaleDateString()}</small>
-          ${g.tags?.length ? `<div style="margin-top:.5rem;opacity:.75;">${g.tags.map(t=>`#${t}`).join(' ')}</div>` : ''}
-        </article>
-      `).join('');
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Pass Fast — Coming Soon</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    body{
+      margin:0;
+      font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      background:#f9fafb;
+      color:#222;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:100vh;
+      text-align:center;
     }
-  } catch (e) {
-    console.error(e);
-    el.textContent = 'Failed to load guides.';
-  }
-</script>
-
+    .wrap{max-width:500px; padding:20px}
+    h1{font-size:clamp(28px,6vw,42px); margin:0 0 16px}
+    p{color:#6b7280; margin:0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>AI Pass Fast</h1>
+    <p>Something new is on the way. This page is temporarily under construction.</p>
+  </div>
 </body>
 </html>

@@ -3,29 +3,479 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AI Pass Fast — Coming Soon</title>
-  <meta name="robots" content="noindex,nofollow" />
+  <title>Build Your Custom Guide Fast — AI Pass Fast</title>
+  <meta name="description" content="Answer a few quick questions and we’ll generate a tailored guide just for you." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root{
+      --bg:#f9fafb;      /* very light gray background */
+      --fg:#222222;      /* dark gray text */
+      --muted:#6b7280;   /* muted gray */
+      --link:#2563eb;    /* link blue */
+      --accent:#10b981;  /* teal/green accent */
+      --card:#ffffff;    /* white card panels */
+      --border:#e5e7eb;  /* subtle borders */
+      --radius:16px;
+      --shadow:0 8px 24px rgba(0,0,0,.08);
+      --shadow-soft:0 4px 12px rgba(0,0,0,.06);
+      --max:1100px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
-      font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-      background:#f9fafb;
-      color:#222;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      height:100vh;
-      text-align:center;
+      font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+      color:var(--fg);
+      background:var(--bg);
+      line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-    .wrap{max-width:500px; padding:20px}
-    h1{font-size:clamp(28px,6vw,42px); margin:0 0 16px}
-    p{color:#6b7280; margin:0}
+    a{color:var(--link); text-decoration:none}
+    a:hover{text-decoration:underline}
+
+    header{
+      position:sticky; top:0; z-index:20;
+      backdrop-filter:saturate(180%) blur(8px);
+      background:linear-gradient(to bottom, rgba(249,250,251,.9), rgba(249,250,251,.6));
+      border-bottom:1px solid var(--border);
+    }
+    .nav{
+      max-width:var(--max); margin:0 auto; padding:12px 16px; display:flex; align-items:center; gap:16px;
+      justify-content:space-between;
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
+    .brand-badge{width:28px; height:28px; border-radius:8px; background:var(--accent); display:grid; place-items:center; color:#fff; font-weight:800}
+    .nav-actions{display:flex; align-items:center; gap:8px}
+    .btn{appearance:none; border:1px solid var(--border); background:var(--card); color:var(--fg); padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer; transition:.2s ease;}
+    .btn:hover{transform:translateY(-1px); box-shadow:var(--shadow-soft)}
+    .btn.primary{background:var(--accent); color:#fff; border-color:transparent}
+    .btn.ghost{background:transparent}
+    .btn.block{width:100%}
+
+    main{max-width:var(--max); margin:0 auto; padding:24px 16px 80px}
+    .hero{display:grid; gap:16px; padding:76px 0 24px}
+    .hero h1{font-size:clamp(24px,6vw,40px); line-height:1.1; margin:0}
+    .hero p{color:var(--muted); margin:0}
+
+    .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);}
+    .panel{padding:18px;}
+    @media (min-width:640px){.panel{padding:28px}}
+
+    .grid{display:grid; gap:16px}
+    @media (min-width:768px){.grid-cols-2{grid-template-columns:1fr 1fr}}
+
+    /* Stepper & screens */
+    .stepper{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+    .chip{padding:6px 10px; border-radius:999px; border:1px solid var(--border); background:#fff; font-size:12px; color:var(--muted)}
+    .chip.active{background:var(--accent); color:#fff; border-color:transparent}
+
+    .screens{position:relative}
+    .screen{display:none}
+    .screen.active{display:block}
+
+    .question{display:grid; gap:10px}
+    .q-label{font-weight:600}
+    .input, textarea{width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:12px; background:#fff; font:inherit}
+    textarea{min-height:110px; resize:vertical}
+
+    .choices{display:grid; gap:10px}
+
+    /* Loading */
+    .loading{display:grid; place-items:center; padding:40px 0}
+    .spinner{width:44px; height:44px; border-radius:999px; border:3px solid var(--border); border-top-color:var(--accent); animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Guide output */
+    .guide{display:grid; gap:14px}
+    .guide .title{font-size:clamp(20px,4vw,28px); font-weight:700}
+    .guide .body{white-space:pre-wrap}
+
+    /* Footer note */
+    .note{font-size:12px; color:var(--muted)}
+
+    /* Modal */
+    .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.4); display:none; align-items:center; justify-content:center; padding:16px}
+    .modal{background:#fff; border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); width:100%; max-width:520px}
+    .modal header{position:unset; backdrop-filter:none; background:#fff; border-bottom:1px solid var(--border)}
+    .modal .panel{padding:20px}
+    .modal-backdrop.show{display:flex}
+
+    /* Utility */
+    .muted{color:var(--muted)}
+    .center{display:grid; place-items:center}
+    .hidden{display:none}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <h1>AI Pass Fast</h1>
-    <p>Something new is on the way. This page is temporarily under construction.</p>
+  <header>
+    <nav class="nav" aria-label="Top Navigation">
+      <div class="brand" aria-label="AI Pass Fast">
+        <div class="brand-badge" aria-hidden="true">⚡</div>
+        <span>AI Pass Fast</span>
+      </div>
+      <div class="nav-actions">
+        <a class="btn ghost" href="/">Home</a>
+        <a class="btn" href="/guides.html">Guide Library</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Build Your Custom Guide Fast</h1>
+      <p>Answer a few quick questions, and we’ll generate a tailored guide just for you.</p>
+    </section>
+
+    <section class="card">
+      <div class="panel grid">
+        <div class="stepper" id="stepper" role="status" aria-live="polite"></div>
+        <div class="screens">
+          <!-- 1) Welcome -->
+          <div class="screen active" id="screen-welcome" aria-labelledby="welcome-title">
+            <div class="grid grid-cols-2">
+              <div class="card" style="box-shadow:none; border:none; background:transparent">
+                <div class="panel">
+                  <h2 id="welcome-title" style="margin-top:0">Choose your path</h2>
+                  <p class="muted">Start with 5 quick questions or go deeper with 10.</p>
+                  <div class="grid" style="margin-top:10px">
+                    <button class="btn primary" id="start-min" aria-describedby="min-desc">Start (Minimal Guide) — 5 questions</button>
+                    <span id="min-desc" class="note">Fastest path to a solid guide.</span>
+                    <button class="btn" id="start-detailed" aria-describedby="det-desc">Start (Detailed Guide) — 10 questions</button>
+                    <span id="det-desc" class="note">More context → more tailored output.</span>
+                  </div>
+                </div>
+              </div>
+              <div class="card" aria-hidden="true">
+                <div class="panel">
+                  <ul class="muted" style="margin:0; padding-left:18px">
+                    <li>Mobile‑first layout, works great on any screen</li>
+                    <li>Progress-aware: resume where you left off</li>
+                    <li>Ad slot on generation step (optional)</li>
+                    <li>Built‑in daily limits and retry flow</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2) Questions -->
+          <div class="screen" id="screen-questions" aria-labelledby="q-title">
+            <div class="grid">
+              <h2 id="q-title" style="margin:0">Questions</h2>
+              <p class="muted" id="q-sub"></p>
+              <div class="question">
+                <label class="q-label" id="q-label" for="q-input">Question</label>
+                <input class="input" id="q-input" type="text" autocomplete="off" />
+                <div class="choices" id="q-choices" aria-live="polite"></div>
+              </div>
+              <div class="grid" style="grid-template-columns:1fr auto; gap:12px; align-items:center">
+                <button class="btn" id="btn-back">Back</button>
+                <button class="btn primary" id="btn-next">Next</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3) Midpoint decision for Minimal flow -->
+          <div class="screen" id="screen-mid" aria-labelledby="mid-title">
+            <div class="grid">
+              <h2 id="mid-title" style="margin:0">That’s enough for a quick guide. Want to go deeper?</h2>
+              <div class="grid grid-cols-2">
+                <button class="btn primary" id="btn-finish-now">Finish Now (generate guide)</button>
+                <button class="btn" id="btn-add-more">Add 5 More</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4) Generating -->
+          <div class="screen" id="screen-loading" aria-labelledby="gen-title">
+            <div class="loading">
+              <div class="spinner" aria-hidden="true"></div>
+              <div class="center" style="margin-top:14px">
+                <h3 id="gen-title" style="margin:0">Crafting your guide based on your answers…</h3>
+                <p class="muted" style="margin:6px 0 0">This usually takes a few seconds.</p>
+              </div>
+            </div>
+            <!-- Optional ad slot -->
+            <div class="panel" aria-label="Sponsored" style="border-top:1px solid var(--border)">
+              <div class="note">Ad space (optional while waiting)</div>
+            </div>
+          </div>
+
+          <!-- 5) Guide output -->
+          <div class="screen" id="screen-output" aria-labelledby="out-title">
+            <div class="guide">
+              <div>
+                <div class="title" id="out-title">Your Custom Guide</div>
+                <p class="muted" id="out-sub">Based on your answers.</p>
+              </div>
+              <article class="body" id="out-body">(Your generated guide will appear here.)</article>
+              <div class="grid grid-cols-2">
+                <button class="btn" id="btn-retry">Retry (1 free)</button>
+                <div class="grid" style="grid-template-columns:1fr 1fr; gap:10px">
+                  <button class="btn" id="btn-copy">Copy</button>
+                  <button class="btn" id="btn-save">Save</button>
+                </div>
+              </div>
+              <p class="note">You have <span id="daily-left">3</span> free guides per day. <a href="#" id="upgrade-link">Upgrade to Pro</a> for unlimited.</p>
+
+              <hr style="border:none; border-top:1px solid var(--border)">
+              <div class="grid">
+                <p class="muted" style="margin:0">Want more inspiration? Check out guides created by others.</p>
+                <a class="btn" href="/guides.html" id="btn-explore">Explore Existing Guides</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6) Daily limit screen -->
+          <div class="screen" id="screen-limit" aria-labelledby="limit-title">
+            <div class="grid center">
+              <div class="card" style="max-width:560px; width:100%">
+                <div class="panel">
+                  <h2 id="limit-title" style="margin-top:0">You’ve reached today’s free guide limit.</h2>
+                  <div class="grid grid-cols-2">
+                    <a class="btn" href="#" id="btn-come-back">Come Back Tomorrow</a>
+                    <a class="btn primary" href="#" id="btn-pro">Unlock More with Pro</a>
+                  </div>
+                  <p class="note" style="margin-top:10px">We may add “Watch an ad” as a future option.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Retry Modal -->
+  <div class="modal-backdrop" id="retry-modal" role="dialog" aria-modal="true" aria-labelledby="retry-title">
+    <div class="modal">
+      <header>
+        <div class="panel" style="display:flex; justify-content:space-between; align-items:center; gap:12px">
+          <strong id="retry-title">Refine your guide</strong>
+          <button class="btn" id="retry-close" aria-label="Close">Close</button>
+        </div>
+      </header>
+      <div class="panel">
+        <p class="muted" style="margin-top:0">What would you like different?</p>
+        <div class="grid grid-cols-2">
+          <button class="btn" data-tweak="shorter">Shorter</button>
+          <button class="btn" data-tweak="more-detailed">More detailed</button>
+          <button class="btn" data-tweak="friendlier">Friendlier tone</button>
+          <button class="btn" data-tweak="more-formal">More formal tone</button>
+        </div>
+      </div>
+    </div>
   </div>
+
+  <script>
+    // --- Simple state machine ---
+    const screens = {
+      welcome: document.getElementById('screen-welcome'),
+      questions: document.getElementById('screen-questions'),
+      mid: document.getElementById('screen-mid'),
+      loading: document.getElementById('screen-loading'),
+      output: document.getElementById('screen-output'),
+      limit: document.getElementById('screen-limit'),
+    };
+    const stepper = document.getElementById('stepper');
+    function show(name){
+      for(const k in screens){ screens[k].classList.remove('active'); }
+      screens[name].classList.add('active');
+      updateStepper();
+    }
+
+    // --- Daily limits (3/day) ---
+    const LIMIT = 3;
+    function todayKey(){
+      const d = new Date();
+      return `guides-${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+    }
+    function getCount(){ return parseInt(localStorage.getItem(todayKey())||'0',10); }
+    function incCount(){ const n = getCount()+1; localStorage.setItem(todayKey(), String(n)); return n; }
+
+    function remaining(){ return Math.max(0, LIMIT - getCount()); }
+
+    // --- Questions model (placeholder content) ---
+    // You can replace these with domain‑specific questions at runtime.
+    const MIN_QUESTIONS = [
+      'What are you trying to accomplish?',
+      'Who is this primarily for?',
+      'What constraints or preferences should we respect?',
+      'What resources do you already have?',
+      'What’s your timeline?'
+    ];
+    const EXTRA_QUESTIONS = [
+      'What is your budget or resource limit?',
+      'What risks or blockers worry you?',
+      'Any stylistic preferences for the guide?',
+      'What outcome would make this a win?',
+      'Anything we should avoid?'
+    ];
+
+    let flow = { total: 0, answers: [], questions: [], idx: 0, retryUsed: false };
+
+    const startMin = document.getElementById('start-min');
+    const startDet = document.getElementById('start-detailed');
+    const qTitle = document.getElementById('q-title');
+    const qSub = document.getElementById('q-sub');
+    const qLabel = document.getElementById('q-label');
+    const qInput = document.getElementById('q-input');
+    const qChoices = document.getElementById('q-choices');
+    const btnBack = document.getElementById('btn-back');
+    const btnNext = document.getElementById('btn-next');
+
+    const btnFinishNow = document.getElementById('btn-finish-now');
+    const btnAddMore = document.getElementById('btn-add-more');
+
+    const outBody = document.getElementById('out-body');
+    const dailyLeft = document.getElementById('daily-left');
+
+    function updateStepper(){
+      const items = [];
+      const steps = [];
+      // crude step labeling for accessibility
+      if(screens.welcome.classList.contains('active')) steps.push('Welcome');
+      else if(screens.questions.classList.contains('active')) steps.push(`Question ${flow.idx+1} of ${flow.total}`);
+      else if(screens.mid.classList.contains('active')) steps.push('Add 5 More?');
+      else if(screens.loading.classList.contains('active')) steps.push('Generating');
+      else if(screens.output.classList.contains('active')) steps.push('Your Guide');
+      else if(screens.limit.classList.contains('active')) steps.push('Limit Reached');
+
+      items.push(`<span class="chip active">${steps[0]||''}</span>`);
+      stepper.innerHTML = items.join('');
+    }
+
+    function begin(questions){
+      flow = { total: questions.length, answers: new Array(questions.length).fill(''), questions:[...questions], idx:0, retryUsed:false };
+      qInput.value='';
+      dailyLeft.textContent = remaining();
+      renderQuestion();
+      show('questions');
+    }
+
+    function renderQuestion(){
+      qTitle.textContent = 'Questions';
+      qSub.textContent = `Question ${flow.idx+1} of ${flow.total}`;
+      qLabel.textContent = flow.questions[flow.idx];
+      qInput.placeholder = 'Type your answer…';
+      qInput.value = flow.answers[flow.idx] || '';
+      qChoices.innerHTML = '';
+      qInput.focus();
+      btnBack.disabled = (flow.idx===0);
+    }
+
+    function next(){
+      flow.answers[flow.idx] = qInput.value.trim();
+      if(flow.idx < flow.total - 1){
+        flow.idx++;
+        renderQuestion();
+      } else {
+        // completed current segment
+        if(flow.total === 5){
+          show('mid');
+        } else {
+          generateGuide();
+        }
+      }
+    }
+
+    function back(){
+      if(flow.idx>0){ flow.idx--; renderQuestion(); }
+      else { show('welcome'); }
+    }
+
+    function addMore(){
+      // Extend to 10 by appending the extra five
+      flow.questions = [...MIN_QUESTIONS, ...EXTRA_QUESTIONS];
+      flow.answers = [...flow.answers, ...new Array(EXTRA_QUESTIONS.length).fill('')];
+      flow.total = 10;
+      // move to next question (idx remains at 5)
+      show('questions');
+      renderQuestion();
+    }
+
+    function generateMockText(answers, tweak){
+      const title = 'Your Custom Guide';
+      const intro = `Here’s a concise plan shaped by your inputs${tweak?` (tweak: ${tweak})`:''}.`;
+      const bullets = answers.map((a,i)=>`- Q${i+1}: ${a||'(no answer)'}\n`).join('');
+      const steps = `\nSuggested Next Steps:\n1) Start with the highest-impact task.\n2) Allocate a small, fixed time window daily.\n3) Review progress weekly and adjust.`;
+      return `${title}\n\n${intro}\n\nKey Details:\n${bullets}${steps}`;
+    }
+
+    function generateGuide(tweak){
+      if(remaining() <= 0){ show('limit'); return; }
+      show('loading');
+      // Simulate latency & generation; replace with real API call.
+      setTimeout(()=>{
+        const text = generateMockText(flow.answers, tweak);
+        outBody.textContent = text;
+        document.getElementById('out-sub').textContent = flow.total===10 ? 'Detailed mode (10 answers).' : 'Minimal mode (5 answers).';
+        const used = incCount();
+        dailyLeft.textContent = Math.max(0, LIMIT - used);
+        show('output');
+      }, 900);
+    }
+
+    // Copy / Save (placeholder save -> download .txt)
+    document.getElementById('btn-copy').addEventListener('click', async()=>{
+      await navigator.clipboard.writeText(outBody.textContent);
+      toast('Copied to clipboard');
+    });
+    document.getElementById('btn-save').addEventListener('click', ()=>{
+      const blob = new Blob([outBody.textContent], {type:'text/plain'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'custom-guide.txt'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Retry flow (one free)
+    const retryModal = document.getElementById('retry-modal');
+    document.getElementById('btn-retry').addEventListener('click', ()=>{
+      if(flow.retryUsed){ toast('Retry limit used'); return; }
+      retryModal.classList.add('show');
+    });
+    document.getElementById('retry-close').addEventListener('click', ()=> retryModal.classList.remove('show'));
+    retryModal.addEventListener('click', (e)=>{ if(e.target===retryModal) retryModal.classList.remove('show'); });
+    retryModal.querySelectorAll('[data-tweak]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        retryModal.classList.remove('show');
+        flow.retryUsed = true;
+        generateGuide(btn.dataset.tweak);
+        toast('Retries used: 1/1 free');
+      })
+    });
+
+    // Nav actions
+    startMin.addEventListener('click', ()=> begin([...MIN_QUESTIONS]));
+    startDet.addEventListener('click', ()=> begin([...MIN_QUESTIONS, ...EXTRA_QUESTIONS]));
+    btnNext.addEventListener('click', next);
+    btnBack.addEventListener('click', back);
+    btnFinishNow.addEventListener('click', ()=> generateGuide());
+    btnAddMore.addEventListener('click', addMore);
+
+    // Keyboard UX
+    qInput.addEventListener('keydown', (e)=>{
+      if(e.key==='Enter'){ e.preventDefault(); next(); }
+    });
+
+    // Toaster
+    function toast(msg){
+      const t = document.createElement('div');
+      t.textContent = msg;
+      t.style.position='fixed'; t.style.bottom='18px'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+      t.style.background='#111'; t.style.color='#fff'; t.style.padding='10px 14px'; t.style.borderRadius='999px'; t.style.boxShadow='var(--shadow)';
+      document.body.appendChild(t);
+      setTimeout(()=>{ t.style.opacity='0'; t.style.transition='opacity .3s'; }, 1400);
+      setTimeout(()=>{ t.remove(); }, 1800);
+    }
+
+    // On load, show remaining
+    dailyLeft.textContent = remaining();
+  </script>
 </body>
 </html>
